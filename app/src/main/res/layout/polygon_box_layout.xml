@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/image_polygon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/polygon_image"
+            android:src="@drawable/ic_launcher_foreground" />
+
+        <ImageView
+            android:id="@+id/remove_bt"
+            android:layout_width="@dimen/cancel_icon_dimension"
+            android:layout_height="@dimen/cancel_icon_dimension"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/cancel_icon"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_baseline_cancel_24"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/size_bt"
+            android:layout_width="@dimen/cancel_icon_dimension"
+            android:layout_height="@dimen/cancel_icon_dimension"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:rotation="45"
+            android:src="@drawable/forward_arrow_icon"
+            app:tint="@color/black"
+            android:contentDescription="@string/resize_button" />
+    </RelativeLayout>
+</layout>

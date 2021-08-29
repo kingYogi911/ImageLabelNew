@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ImageLabel</string>
+    <string name="polygon_image">polygon_image</string>
+    <string name="cancel_icon">cancel_icon</string>
+    <string name="resize_button">resize_button</string>
+    <string name="add_draggable_polygon">Add Draggable Polygon</string>
+</resources>

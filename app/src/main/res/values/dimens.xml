@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cancel_icon_dimension">30dp</dimen>
+</resources>
