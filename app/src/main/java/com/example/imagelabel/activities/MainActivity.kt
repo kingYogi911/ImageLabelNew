@@ -24,34 +24,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onResizeTouch(v: View, event: MotionEvent) {
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    x = event.x; y = event.y
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val disX = event.x - x;
-                    val disY = event.y - y;
-                    val (t, l) = listOf(v.left, v.top);
 
-                    val lp = v.layoutParams.apply {
-                        this.width += (disX * 0.5).toInt()
-                        this.height += (disY * 0.5).toInt()
-                    }
-                    v.layoutParams = lp
-                    v.left = l
-                    v.top = t
-                }
-                MotionEvent.ACTION_UP ->
-                    Handler(Looper.getMainLooper())
-                        .postDelayed({ (v as PolygonView).hideOptions() }, 3000)
-            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityMainBinding.root)
-        activityMainBinding.addPolygon.setOnClickListener {
+        //activityMainBinding.editableImageLayout.loadTestData();
+        activityMainBinding.labelTypeIv.setOnClickListener {
             polygonList.forEach { v ->
                 v.hideOptions()
                 Log.e("MainActivity", "hideOptions() called")
@@ -62,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             pv.y = (activityMainBinding.container.height / 2).toFloat()
             pv.isClickable = true
             pv.isFocusable = true
-            pv.setData(R.drawable.ic_launcher_background, boxActionListener)
+            pv.setData(R.drawable.ic_launcher_foreground, boxActionListener)
             activityMainBinding.container.addView(pv)
         }
 

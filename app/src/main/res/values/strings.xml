@@ -4,4 +4,8 @@
     <string name="cancel_icon">cancel_icon</string>
     <string name="resize_button">resize_button</string>
     <string name="add_draggable_polygon">Add Draggable Polygon</string>
+    <string name="label">Label</string>
+    <string name="color">Color</string>
+    <string name="crop">Crop</string>
+    <string name="upload">Upload</string>
 </resources>

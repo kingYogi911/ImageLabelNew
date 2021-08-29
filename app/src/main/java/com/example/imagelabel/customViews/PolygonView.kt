@@ -21,6 +21,10 @@ class PolygonView : LinearLayoutCompat {
         defStyleAttr
     )
 
+    private var tempX = 0f
+    private var tempY = 0f
+    private var isOptionsVisible = true
+    private var isClicked=false
     private val polygonBoxLayoutBinding by lazy {
         PolygonBoxLayoutBinding.inflate(
             LayoutInflater.from(
@@ -35,38 +39,52 @@ class PolygonView : LinearLayoutCompat {
         polygonBoxLayoutBinding.removeBt.setOnClickListener {
             boxActionListener?.onRemovePressed(this@PolygonView)
         }
-        polygonBoxLayoutBinding.imagePolygon.setOnClickListener {
-            this.showOptions()
-        }
+
         polygonBoxLayoutBinding.sizeBt.setOnTouchListener { _, motionEvent ->
-            boxActionListener?.onResizeTouch(
-                this@PolygonView,
-                motionEvent
-            ); true
-        }
-        Log.e("PolygonView", "Setting Focus Change Listener");
-        this.setOnFocusChangeListener { _, b ->
-            Log.e("PolygonView", "b=$b");
-            polygonBoxLayoutBinding.apply {
-                removeBt.visibility = if (b) VISIBLE else GONE
-                sizeBt.visibility = if (b) VISIBLE else GONE
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    tempX = motionEvent.x;tempY = motionEvent.y
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val disX = motionEvent.x - tempX;
+                    val disY = motionEvent.y - tempY;
+                    val (t, l) = listOf(left, top);
+
+                    val lp = layoutParams.apply {
+                        this.width += (disX * 0.5).toInt()
+                        this.height += (disY * 0.5).toInt()
+                    }
+                    layoutParams = lp
+                    left = l
+                    top = t
+                }
             }
+            true
         }
-        var (x, y) = listOf(0f, 0f)
+
         polygonBoxLayoutBinding.imagePolygon.setOnTouchListener { _, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    x = motionEvent.x
-                    y = motionEvent.y
-                    showOptions()
+                    tempX = motionEvent.x
+                    tempY = motionEvent.y
+                    isClicked=true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    this@PolygonView.x += motionEvent.x - x
-                    this@PolygonView.y += motionEvent.y - y
+                    isClicked=false
+                    this.showOptions()
+                    this@PolygonView.x += motionEvent.x - tempX
+                    this@PolygonView.y += motionEvent.y - tempY
                 }
                 MotionEvent.ACTION_UP->{
-                    Handler(Looper.getMainLooper())
-                        .postDelayed({ hideOptions() }, 5000)
+                    if (isClicked){
+                        if(isOptionsVisible){
+                            isOptionsVisible=false
+                            hideOptions()
+                        }else{
+                            isOptionsVisible=true
+                            showOptions()
+                        }
+                    }
                 }
             }
             true
@@ -81,7 +99,6 @@ class PolygonView : LinearLayoutCompat {
     fun hideOptions() {
         polygonBoxLayoutBinding.removeBt.visibility = GONE
         polygonBoxLayoutBinding.sizeBt.visibility = GONE
-        //invalidate();
     }
 
     private fun showOptions() {
