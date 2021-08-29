@@ -3,9 +3,21 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/circle.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/circle_white_background.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/ic_baseline_cancel_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/ic_circle_svgrepo_com.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/label_text_background.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/square.xml" value="0.2703125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/drawable/triangle.xml" value="0.2703125" />
         <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/activity_main.xml" value="0.20199275362318841" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/bottom_sheet_common.xml" value="0.19610507246376813" />
         <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/editable_image_layout.xml" value="0.19610507246376813" />
-        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/polygon_box_layout.xml" value="0.20199275362318841" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/polygon_box_layout.xml" value="0.2" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/polygon_layout_default.xml" value="0.19610507246376813" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/polygon_rv_item.xml" value="0.19610507246376813" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/layout/poygon_default.xml" value="0.19610507246376813" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/ImageLabel/app/src/main/res/xml/file_paths.xml" value="0.19610507246376813" />
       </map>
     </option>
   </component>

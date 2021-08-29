@@ -36,16 +36,11 @@ class EditableImageLayout : RelativeLayout {
     }
 
     fun setImageBitmap(bitmap: Bitmap?) {
-        this.bitmap = bitmap;
+        //this.bitmap = bitmap;
+        binding.iv.setImageBitmap(bitmap)
         invalidate();
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        bitmap?.let {
-            canvas?.drawBitmap(it, 0f, 0f, null)
-        }
-    }
 
     fun getFinalImage(): Bitmap {
         val bitmap = Bitmap.createBitmap(

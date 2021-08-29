@@ -2,13 +2,19 @@ package com.example.imagelabel.customViews
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.widget.RelativeLayout
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.example.imagelabel.databinding.PolygonBoxLayoutBinding
 
 @SuppressLint("ClickableViewAccessibility")
@@ -24,7 +30,7 @@ class PolygonView : LinearLayoutCompat {
     private var tempX = 0f
     private var tempY = 0f
     private var isOptionsVisible = true
-    private var isClicked=false
+    private var isClicked = false
     private val polygonBoxLayoutBinding by lazy {
         PolygonBoxLayoutBinding.inflate(
             LayoutInflater.from(
@@ -35,7 +41,6 @@ class PolygonView : LinearLayoutCompat {
     private var boxActionListener: BoxActionListener? = null;
 
     init {
-
         polygonBoxLayoutBinding.removeBt.setOnClickListener {
             boxActionListener?.onRemovePressed(this@PolygonView)
         }
@@ -50,13 +55,13 @@ class PolygonView : LinearLayoutCompat {
                     val disY = motionEvent.y - tempY;
                     val (t, l) = listOf(left, top);
 
-                    val lp = layoutParams.apply {
-                        this.width += (disX * 0.5).toInt()
-                        this.height += (disY * 0.5).toInt()
+                    val lp = this@PolygonView.layoutParams.apply {
+                        this@apply.width += (disX * 0.5).toInt()
+                        this@apply.height += (disY * 0.5).toInt()
                     }
-                    layoutParams = lp
-                    left = l
-                    top = t
+                    this@PolygonView.layoutParams = lp
+                    this@PolygonView.left = l
+                    this@PolygonView.top = t
                 }
             }
             true
@@ -67,21 +72,22 @@ class PolygonView : LinearLayoutCompat {
                 MotionEvent.ACTION_DOWN -> {
                     tempX = motionEvent.x
                     tempY = motionEvent.y
-                    isClicked=true
+                    isClicked = true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    isClicked=false
+                    isClicked = false
                     this.showOptions()
                     this@PolygonView.x += motionEvent.x - tempX
                     this@PolygonView.y += motionEvent.y - tempY
                 }
-                MotionEvent.ACTION_UP->{
-                    if (isClicked){
-                        if(isOptionsVisible){
-                            isOptionsVisible=false
+                MotionEvent.ACTION_UP -> {
+                    if (isClicked) {
+                        if (isOptionsVisible) {
+                            isOptionsVisible = false
                             hideOptions()
-                        }else{
-                            isOptionsVisible=true
+                        } else {
+                            isOptionsVisible = true
+                            boxActionListener?.onSelected(this)
                             showOptions()
                         }
                     }
@@ -92,8 +98,22 @@ class PolygonView : LinearLayoutCompat {
     }
 
     fun setData(imageSourceId: Int, boxActionListener: BoxActionListener) {
-        polygonBoxLayoutBinding.imagePolygon.setImageResource(imageSourceId);
+        polygonBoxLayoutBinding.apply {
+            imagePolygon.setImageResource(imageSourceId)
+        }
         this.boxActionListener = boxActionListener
+    }
+
+    fun setTintColor(colorResId: Int) {
+        val color=ContextCompat.getColor(
+            context,
+            colorResId
+        )
+        polygonBoxLayoutBinding.apply {
+            imagePolygon.setColorFilter(color)
+            labelTv.setTextColor(color)
+        }
+
     }
 
     fun hideOptions() {
@@ -101,7 +121,7 @@ class PolygonView : LinearLayoutCompat {
         polygonBoxLayoutBinding.sizeBt.visibility = GONE
     }
 
-    private fun showOptions() {
+    fun showOptions() {
         polygonBoxLayoutBinding.removeBt.visibility = VISIBLE
         polygonBoxLayoutBinding.sizeBt.visibility = VISIBLE
     }

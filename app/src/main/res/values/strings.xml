@@ -8,4 +8,5 @@
     <string name="color">Color</string>
     <string name="crop">Crop</string>
     <string name="upload">Upload</string>
+    <string name="text_here">text_here</string>
 </resources>
