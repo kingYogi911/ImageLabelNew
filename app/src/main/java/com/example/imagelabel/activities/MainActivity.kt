@@ -1,21 +1,27 @@
 package com.example.imagelabel.activities
 
-import android.R.attr
-import android.app.Activity
+import android.app.ActionBar
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
-import android.util.TypedValue
-import android.view.MotionEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.DialogFragment
 import com.example.imagelabel.R
 import com.example.imagelabel.adapters.BottomSheetAdapter
-import com.example.imagelabel.adapters.ColorSelectedListener
-import com.example.imagelabel.adapters.PolygonSelectedListener
 import com.example.imagelabel.customViews.BoxActionListener
 import com.example.imagelabel.customViews.PolygonView
 import com.example.imagelabel.data.MyColor
@@ -23,25 +29,21 @@ import com.example.imagelabel.data.Polygon
 import com.example.imagelabel.databinding.ActivityMainBinding
 import com.example.imagelabel.databinding.BottomSheetCommonBinding
 import com.example.imagelabel.databinding.PolygonDefaultBinding
+import com.example.imagelabel.util.*
+import com.example.imagelabel.util.UtilManager.Companion.dpToPx
+import com.example.imagelabel.util.UtilManager.Companion.getUriForBitmap
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.theartofdev.edmodo.cropper.CropImage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.core.content.FileProvider
-import com.example.imagelabel.data.Constants
-import android.content.pm.ResolveInfo
-
-import android.content.pm.PackageManager
-
-import android.os.Build
-import androidx.core.content.ContextCompat
-import com.theartofdev.edmodo.cropper.CropImage
-import android.R.attr.data
-import android.content.ContentResolver
 
 
+@Suppress("ClassName")
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val activityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater).also {
@@ -53,15 +55,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
     private var uri: Uri? = null
     private val polygonList by lazy { ArrayList<PolygonView>() }
-    private var x: Float = 0f
-    private var y: Float = 0f
     private var bsd: BottomSheetDialog? = null
     private var isImageCaptured = false
-    var imgPath: String? = null
+    private var imgPath: String? = null
     var activeLabel: PolygonView? = null
     var activeColor: MyColor? = null
-
-    public enum class BOTTOM_SHEET {
+    private val utilManager by lazy { UtilManager(this) }
+    private val pd by lazy { AlertDialog.Builder(this).setView(ProgressBar(this).apply {
+        layoutParams= ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        isIndeterminate=true
+    }).setCancelable(false).create() }
+    enum class BOTTOM_SHEET {
         POLYGON, COLOR
     }
 
@@ -125,11 +129,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.color -> showBottomSheet(BOTTOM_SHEET.COLOR)
             R.id.crop -> CropImage.activity(uri)
                 .start(this)
-            R.id.upload -> {//TODO Incomplete
+            R.id.upload -> {
                 polygonList.forEach { it.hideOptions() }
                 val bitmap = activityMainBinding.editableImageLayout.getFinalImage()
-                activityMainBinding.container.removeAllViews()
-                activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
+                //activityMainBinding.container.removeAllViews()
+                //activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
+                this.uri = getUriForBitmap(bitmap)
+                uploadFile()
             }
             R.id.editable_image_layout -> polygonList.forEach { it.hideOptions() }
         }
@@ -148,20 +154,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
             putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            } else {
-                val resInfoList: List<ResolveInfo> = getPackageManager()
-                    .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-                for (resolveInfo in resInfoList) {
-                    val packageName = resolveInfo.activityInfo.packageName
-                    grantUriPermission(
-                        packageName,
-                        uri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                }
-            }
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         }
         startActivityForResult(intent, Constants.IMAGE_CAPTURE_REQ_CODE)
     }
@@ -169,24 +162,83 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("MainActivity", "onActivityResult")
         Log.e("MainActivity", "requestCode=$requestCode")
-        if (requestCode == Constants.IMAGE_CAPTURE_REQ_CODE) {
-            Log.e("MainActivity", "resultCode=$resultCode")
-            if (resultCode == Activity.RESULT_OK) {
-                val bitmap = BitmapFactory.decodeFile(imgPath)
-                activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
-                isImageCaptured = true
-            }
-        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                val result = CropImage.getActivityResult(data)
-                val bitmap = contentResolver.openInputStream(result.uri)!!.let {
-                    BitmapFactory.decodeStream(it)
+        Log.e("MainActivity","resultCode =$resultCode, ${resultCode == RESULT_OK}")
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                Constants.IMAGE_CAPTURE_REQ_CODE -> {
+                    Log.e("MainActivity", "resultCode=$resultCode")
+                    val bitmap = BitmapFactory.decodeFile(imgPath)
+                    activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
+                    isImageCaptured = true
                 }
-                activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    val result = CropImage.getActivityResult(data)
+                    val bitmap = contentResolver.openInputStream(result.uri)!!.let {
+                        BitmapFactory.decodeStream(it)
+                    }
+                    activityMainBinding.editableImageLayout.setImageBitmap(bitmap)
+                }
+                Constants.GOOGLE_SING_IN_REQ_CODE -> {
+                    handleSingInResponseData(data)
+                }
+                else -> {
+                    super.onActivityResult(requestCode, resultCode, data)
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    private fun handleSingInResponseData(data: Intent?) {
+        GoogleSignIn.getSignedInAccountFromIntent(data).addOnCompleteListener {
+            println("Sign in successful,email:${it.result.email}")
+            uploadFile()
+        }.addOnCanceledListener {
+            Toast.makeText(this, "Sing in failed!!!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun uploadFile() {
+        if (utilManager.isUserSignedIn()) {
+            pd.show()
+            GlobalScope.launch {
+                utilManager.uploadToDrive(uri!!,uploadCallBack)
+            }
+        } else {
+            Log.e(TAG,"user not signed in, initiating sing in")
+            utilManager.initiateGoogleSingIn()
+        }
+    }
+
+    private val uploadCallBack=object :UploadCallBack{
+        override fun onSuccess(jsonObject: JSONObject) {
+
+            runOnUiThread {
+                pd.dismiss()
+                AlertDialog.Builder(this@MainActivity)
+                    .setCancelable(false)
+                    .setTitle("Image has been Saved to Drive SuccessFully")
+                    .setMessage("You can continue with a new Image or Exit")
+                    .setPositiveButton("Exit"
+                    ) { _, _ -> this@MainActivity.finish()}
+                    .setNegativeButton("Continue"){
+                            _, _->
+                        Intent(this@MainActivity,MainActivity::class.java).let {
+                            startActivity(it)
+                            this@MainActivity.finish()
+                        }
+                    }.show()
+            }
+        }
+
+        override fun onFailure(e: Exception) {
+            runOnUiThread {
+                pd.dismiss()
+                Toast.makeText(this@MainActivity,"Something Went Wrong",Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
 
     private fun addPolygon(polygon: Polygon) {
@@ -209,7 +261,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun showBottomSheet(type: BOTTOM_SHEET) {
+    private fun showBottomSheet(type: BOTTOM_SHEET) {
         bsd = BottomSheetDialog(this)
         val list = when (type) {
             BOTTOM_SHEET.POLYGON -> arrayListOf(
@@ -237,12 +289,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         bsd!!.show()
     }
-
-    fun dpToPx(dp: Float): Int = Resources.getSystem().displayMetrics.let {
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            it
-        )
-    }.toInt()
+    companion object{
+        val TAG=MainActivity::class.simpleName
+    }
 }

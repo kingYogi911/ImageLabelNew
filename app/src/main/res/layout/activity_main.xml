@@ -135,11 +135,12 @@
 
                 <ImageButton
                     android:id="@+id/upload"
-                    app:tint="@color/black"
                     android:padding="10dp"
+                    android:src="@drawable/upload"
+                    android:scaleType="fitXY"
                     android:background="@color/white"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1" />
 
                 <TextView

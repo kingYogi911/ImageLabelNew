@@ -10,13 +10,15 @@ import com.example.imagelabel.activities.MainActivity
 import com.example.imagelabel.data.MyColor
 import com.example.imagelabel.data.Polygon
 import com.example.imagelabel.databinding.PolygonRvItemBinding
+import com.example.imagelabel.util.ColorSelectedListener
+import com.example.imagelabel.util.PolygonSelectedListener
 
 class BottomSheetAdapter(private val itemList: List<Any>, val type: MainActivity.BOTTOM_SHEET) :
     RecyclerView.Adapter<BottomSheetAdapter.MyViewHolder>() {
     class MyViewHolder(val binding: PolygonRvItemBinding) : RecyclerView.ViewHolder(binding.root)
     private lateinit var context:Context
     var polygonSelectedListener: PolygonSelectedListener? = null
-    var colorSelectedListener:ColorSelectedListener?=null
+    var colorSelectedListener: ColorSelectedListener?=null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         context=parent.context
         return MyViewHolder(
