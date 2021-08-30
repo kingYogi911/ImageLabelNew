@@ -9,4 +9,8 @@
     <string name="crop">Crop</string>
     <string name="upload">Upload</string>
     <string name="text_here">text_here</string>
+    <string name="cancel">Cancel</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="file_name">file_name</string>
+    <string name="brightness">Brightness</string>
 </resources>

@@ -1,13 +1,16 @@
 package com.example.imagelabel.util
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.util.TypedValue
-import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.imagelabel.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -57,10 +60,10 @@ class UtilManager(private val activity: Activity) {
         return null
     }
 
-    fun uploadToDrive(uri: Uri,callBack:UploadCallBack) {
+    fun uploadToDrive(uri: Uri, file_name: String, callBack: UploadCallBack) {
         try {
             val file: File = activity.getFileFromContentUri(uri)!!
-            val gFile = com.google.api.services.drive.model.File().apply { name = file.name }
+            val gFile = com.google.api.services.drive.model.File().apply { name = file_name }
             val fileContent = FileContent(activity.contentResolver.getType(uri), file)
             val driveService = getDriveServices()
             val result = driveService!!.Files().create(gFile, fileContent).execute()
@@ -71,6 +74,26 @@ class UtilManager(private val activity: Activity) {
         }
     }
 
+    fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun requestAllPendingPermissions(): Int {
+        val list = arrayListOf<String>()
+        if (!checkPermission(Manifest.permission.INTERNET))
+            list.add(Manifest.permission.INTERNET)
+        if (!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+            list.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (!checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return if (list.isEmpty()) 0 else {
+            ActivityCompat.requestPermissions(activity, list.toTypedArray(), Constants.ALL_PERMISSION_REQ_CODE)
+            list.size
+        }
+    }
 
     companion object {
         fun Context.getFileFromContentUri(uri: Uri): File? {

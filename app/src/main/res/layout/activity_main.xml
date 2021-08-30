@@ -29,6 +29,7 @@
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent" />
             </com.example.imagelabel.customViews.EditableImageLayout>
+
         </RelativeLayout>
 
         <LinearLayout
@@ -36,20 +37,21 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="end"
+            android:background="@color/gray"
             android:orientation="horizontal"
+            android:paddingVertical="2dp"
             android:text="@string/add_draggable_polygon"
             android:textAllCaps="false"
-            android:paddingVertical="2dp"
-            android:background="@color/gray"
-            android:weightSum="4">
+            android:weightSum="5">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:layout_weight="1"
                 android:background="@color/white"
-                android:layout_marginHorizontal="2dp"
                 android:orientation="vertical">
+
                 <ImageButton
                     android:id="@+id/label_type_iv"
                     android:layout_width="match_parent"
@@ -73,20 +75,20 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_marginHorizontal="2dp"
+                android:layout_weight="1"
                 android:background="@color/white"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/color"
-                    app:tint="@color/black"
-                    android:padding="10dp"
-                    android:background="@color/white"
-                    android:src="@drawable/square_filled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:src="@drawable/square_filled"
+                    app:tint="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -100,21 +102,21 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:layout_weight="1"
                 android:background="@color/white"
-                android:layout_marginHorizontal="2dp"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/crop"
-                    app:tint="@color/black"
-                    android:padding="10dp"
-                    android:background="@color/white"
-                    android:src="@drawable/crop_rotate"
-                    android:scaleType="fitXY"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/crop_rotate"
+                    app:tint="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -128,20 +130,48 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:layout_weight="1"
                 android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/brightness"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/brightness"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/brightness" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_marginHorizontal="2dp"
+                android:layout_weight="1"
+                android:background="@color/white"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/upload"
-                    android:padding="10dp"
-                    android:src="@drawable/upload"
-                    android:scaleType="fitXY"
-                    android:background="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/upload" />
 
                 <TextView
                     android:layout_width="match_parent"

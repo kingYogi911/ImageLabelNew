@@ -4,5 +4,7 @@ class Constants {
     companion object {
         const val IMAGE_CAPTURE_REQ_CODE = 100
         const val GOOGLE_SING_IN_REQ_CODE = 101
+
+        const val ALL_PERMISSION_REQ_CODE = 199
     }
 }
